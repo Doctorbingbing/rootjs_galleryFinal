@@ -23,10 +23,26 @@ function initiateApp(){
 	/*advanced: add jquery sortable call here to make the gallery able to be sorted
 		//on change, rebuild the images array into the new order
 	*/
+	pictures = window.localStorage.getItem('images').split(',');	
 	makeGallery(pictures);
 	addModalCloseHandler();
 	$('#gallery').sortable();
+	$('#gallery').on('sortstop', getOrder);
+	console.log(pictures)
 }
+function getOrder(){
+	var divCollection = $('#gallery').children();
+	for (var index=0; index < pictures.length; index++){
+		var currentDiv = $(divCollection[index]);
+		var imgSrc = currentDiv.attr('data-image-url');
+		pictures[index] = imgSrc;
+
+
+	}
+	console.log(pictures);
+	window.localStorage.setItem('images', pictures.toString());
+}
+
 function makeGallery(imageArray){
 	//use loops and jquery dom creation to make the html structure inside the #gallery section
 	//create a loop to go through the images in the imageArray
@@ -75,12 +91,8 @@ function displayImage(){
 	//show the modal with JS.  Check for more info here: 
 	//https://www.w3schools.com/bootstrap/bootstrap_ref_js_modal.asp
 	var completeURL = $(this).attr('data-image-url');
-    console.log("TCL: displayImage -> completeURL", completeURL);
 	var shortenedURL = completeURL.slice(completeURL.indexOf('/')+1);
-	console.log("TCL: displayImage -> shortenedURL", shortenedURL);
-	var imageName = shortenedURL.slice(0,shortenedURL.indexOf('.'));
-    console.log("TCL: displayImage -> imageName", imageName)
-	
+	var imageName = shortenedURL.slice(0,shortenedURL.indexOf('.'));	
 	$('.modal-title').text(imageName);
 	$('.modal-body > img').attr('src',completeURL);
 	$('#galleryModal').modal();
